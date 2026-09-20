@@ -14,10 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install clang / wasm target / zip
+      - name: Install clang / lld
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang lld zip
+          sudo apt-get install -y clang lld
 
       - name: Ensure wokwi-api.h exists
         run: |
@@ -35,11 +35,11 @@ jobs:
             -o dist/chip.wasm src/main.c
           cp chip.json dist/chip.json
 
-      - name: Zip chip package
-        run: |
-          cd dist && zip -9 ../chip.zip chip.wasm chip.json
-
-      - name: Upload release asset
+      # Wokwi fetches chip.wasm and chip.json as INDIVIDUAL release assets,
+      # NOT from inside a zip. Upload both files directly.
+      - name: Upload chip.wasm as release asset
         uses: softprops/action-gh-release@v2
         with:
-          files: chip.zip
+          files: |
+            dist/chip.wasm
+            dist/chip.json
