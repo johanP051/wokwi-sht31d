@@ -5,8 +5,8 @@
   "category": "sensors",
   "pins": ["VCC", "GND", "SDA", "SCL"],
   "controls": [
-    { "type": "text", "label": "T (°C)", "attr": "temperature" },
-    { "type": "text", "label": "RH (%)", "attr": "humidity" }
+    { "type": "slider", "label": "T (°C)", "attr": "temperature", "min": -10, "max": 40 },
+    { "type": "slider", "label": "RH (%)", "attr": "humidity", "min": 0, "max": 100 }
   ],
   "variants": []
 }

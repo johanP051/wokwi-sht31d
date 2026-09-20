@@ -1,11 +1,8 @@
 /*
- * Custom Chip: Emulador mínimo de Sensirion SHT31-D para Wokwi
- * --------------------------------------------------------------
- * Responde al protocolo I2C usado por la librería Adafruit_SHT31:
- *   1) El maestro escribe 2 bytes de comando (p.ej. 0x2400)
- *   2) El chip prepara 6 bytes de respuesta:
- *        [tempMSB, tempLSB, tempCRC, humMSB, humLSB, humCRC]
- *   3) El maestro lee esos 6 bytes.
+ * Custom Chip: Emulador Sensirion SHT31-D para Wokwi (v1.1.0)
+ * -------------------------------------------------------------
+ * Fix: Refresco incondicional de mediciones en cada transacción de lectura.
+ * Freestanding C compatible con wasm32-unknown-unknown sin dependencias de stdlib.
  */
 
 #include "wokwi-api.h"
@@ -71,9 +68,8 @@ static void chip_prepare_measurement(chip_state_t *c) {
 static bool on_i2c_connect(void *user_data, uint32_t address, bool read) {
   chip_state_t *c = (chip_state_t *)user_data;
   if (read) {
-    if (c->tx_len == 0) {
-      chip_prepare_measurement(c);
-    }
+    /* SIEMPRE refrescar la medición con el valor actual del slider */
+    chip_prepare_measurement(c);
   } else {
     c->rx_pos = 0;
   }
@@ -99,7 +95,7 @@ static bool on_i2c_write(void *user_data, uint8_t data) {
   return true;
 }
 
-static void on_i2c_disconnect(void *user_data) {
+static void on_i2c_disconnect(void *user_data, uint32_t address) {
   (void)user_data;
 }
 
