@@ -1,0 +1,45 @@
+name: Build and Release Chip
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang / wasm target / zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang lld zip
+
+      - name: Ensure wokwi-api.h exists
+        run: |
+          mkdir -p include
+          if [ ! -f include/wokwi-api.h ]; then
+            curl -sL https://wokwi.com/api/chips/wokwi-api.h -o include/wokwi-api.h
+          fi
+
+      - name: Compile chip to WASM
+        run: |
+          mkdir -p dist
+          clang --target=wasm32-unknown-unknown \
+            -nostdlib -Wl,--no-entry -Wl,--export-all \
+            -O2 -Iinclude \
+            -o dist/chip.wasm src/main.c
+          cp chip.json dist/chip.json
+
+      - name: Zip chip package
+        run: |
+          cd dist && zip -9 ../chip.zip chip.wasm chip.json
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: chip.zip

@@ -1,0 +1,12 @@
+{
+  "name": "chip-sht31",
+  "author": "MeshAgro Team",
+  "title": "SHT31-D Sensor (Custom)",
+  "category": "sensors",
+  "pins": ["VCC", "GND", "SDA", "SCL"],
+  "controls": [
+    { "type": "text", "label": "T (°C)", "attr": "temperature" },
+    { "type": "text", "label": "RH (%)", "attr": "humidity" }
+  ],
+  "variants": []
+}
