@@ -95,7 +95,7 @@ static bool on_i2c_write(void *user_data, uint8_t data) {
   return true;
 }
 
-static void on_i2c_disconnect(void *user_data, uint32_t address) {
+static void on_i2c_disconnect(void *user_data) {
   (void)user_data;
 }
 
